@@ -6,6 +6,15 @@ pipeline {
     environment {
         // 배포에 필요한 변수 설정
         DOCKER_IMAGE = "demo-app" // 도커 이미지 이름
+        CONTAINER_NAME = "springboot-container" // 도커 컨테이너 이름
+        JAR_FILE_NAME = "app.jar" // 복사할 JAR 파일 이름
+        PORT = "8081" // 컨테이너와 연결할 포트
+        
+        REMOTE_USER = "ec2-user" // 원격(spring) 서버 사용자
+        REMOTE_HOST = "15.164.195.223" // 원격(spring) 서버 IP(Public IP)
+        
+        REMOTE_DIR = "/home/ec2-user/deploy" // 원격 서버에 파일 복사할 경로
+        SSH_CREDENTIALS_ID = "6e975e8d-c1ca-41f8-9dda-c989ad5a2013" // Jenkins SSH 자격 증명 ID
     }
     stages {
         stage('Git Checkout') {
@@ -14,5 +23,19 @@ pipeline {
             checkout scm
             }
         }
+        stage('Maven Build') {
+            steps {
+                // 테스트는 건너뛰고 Maven 빌드
+                sh 'mvn clean package -DskipTests'
+                // sh 'echo Hello' : 리눅스 명령어 실행
+            }
+        }
+        stage('Prepare Jar') {
+            steps {
+                // 빌드 결과물인 JAR 파일을 지정한 이름(app.jar)으로 복사
+                sh 'cp target/demo-0.0.1-SNAPSHOT.jar ${JAR_FILE_NAME}'
+            }
+        }
+ 
     }
 }
