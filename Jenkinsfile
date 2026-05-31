@@ -50,9 +50,7 @@ pipeline {
         }
         stage('Remote Docker Build & Deploy') {
             steps {
-                // Jenkins가 원격 서버에 SSH 접속할 수 있도록 sshagent 사용
-                sshagent (credentials: [env.SSH_CREDENTIALS_ID]) {
-                    // 원격 서버에 배포 디렉토리 생성 (없으면 새로 만듦)
+                sshagent (credentials : [env.SSH_CREDENTIALS_ID]) {
                     sh """
 ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${REMOTE_USER}@${REMOTE_HOST} << ENDSSH
     cd ${REMOTE_DIR} || exit 1
@@ -62,8 +60,6 @@ ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${REMOTE_USER}@$
 ENDSSH
                     """
                 }
-
-
             }
         }
  
