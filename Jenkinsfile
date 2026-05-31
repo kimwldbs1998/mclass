@@ -3,6 +3,10 @@ pipeline {
     tools {
         maven 'maven 3.9.12' // Jenkins에 등록된 Maven 3.9.12을 사용
     }
+    environment {
+        // 배포에 필요한 변수 설정
+        DOCKER_IMAGE = "demo-app" // 도커 이미지 이름
+    }
     stages {
         stage('Git Checkout') {
             steps { // step : stage 안에서 실행할 실제 명령어
